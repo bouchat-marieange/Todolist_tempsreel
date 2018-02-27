@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Todolist en temps réel</title>
+  <style>
+  a {text-decoration: none; color: black;}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Ma todolist</h1>
+
+    <!-- La zone de todolist (au départ elle est vide et ne contient aucunes tâches)-->
+    <div id="todo">
+      <ul>
+        <% todolist.forEach(function(nouvelleTache, index){ %>
+        <li><a class="supression" href="todo.ejs">✘</a> <%= nouvelleTache %> </li>
+        <% }); %>
+      </ul>
+    </div>
+
+      <!-- Le formulaire permettant d'ajouter des tâches à la todolist -->
+      <form id="addForm">
+        <p>
+          <label for="newtodo">Que dois-je faire ?</label>
+          <input type="text" name="newtodo" id="newtodo" autofocus />
+          <input type="submit" value="Envoyer" />
+        </p>
+      </form>
+    </div>
+
+    <!-- On inclus la bibliothèque JQuey -->
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+    <!-- On fait récupérer au client le fichier socket.io.js qui permet de gérer la communication avec le serveur du côté client -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+    // Connexion à socket.io qui permet d'effectuer des actions du côté du client pour communique avec le serveur
+    var socket = io.connect('http://localhost:8080');
+
+    // Afficher les tâches - OK
+    socket.on('listeActuelle', function(todolist) {
+      $('#todolist').empty();
+      todolist.forEach(function(nouvelleTache, index) {
+        insererTache(nouvelleTache, index);
+      });
+    });
+
+    // Quand l'utilisateur envoie avec le formulaire
+    $('#addForm').submit(function(){
+      var nouvelleTache = $('newtodo').val();// On stocke la nouvelle tâche en JQuery dans la variable nouvelleTache
+      socket.emit('ajout', nouvelleTache);// On transmet la nouvelle tâche aux autres utilisateurs connectés
+      insererTache(nouvelleTache, index);// On affiche la nouvelle tâche aussi sur notre page
+      $('#newtodo').val('').focus(); // On vide la zone de texte (dont l'id est #newtodo) du formulaire et remettre le focus desssus
+      return true; // Permet de bloquer l'envoi "classique" du formulaire
+    });
+
+    // Dès que la nouvelle tâche est dans le tableau todolist[], on l'affiche dans la liste
+    socket.on('ajout', function(data) {
+      insererTache(data.nouvelleTache, data.index);
+    });
+    function insererTache(nouvelleTache, index){
+      $('#todolist').append('<% todolist.forEach(function(nouvelleTache, index){ %><li><a class="supression" href="todolist.ejs">✘</a> <%= nouvelleTache %> </li><% }); %>');
+    }
+
+    // Supprimer une tâche
+    $('.suppression').on('click', function(){
+      socket.emit('suppression', $(this).data('index'));
+    });
+
+    </script>
+  </body>
+  </html>
