@@ -7,7 +7,8 @@ var ent = require('ent'); //Charge module ent pour éviter échange JavaScript m
 
 //Définition des variables
 // Variable globale contenant un tableau reprenant toutes les tâches de la todolist
-var todolist = ['Terminer tuto Node.js','Me mettre à React'];
+var todolist = [];
+// var index;
 
 // Définition des routes et des redirections avec Express
 //On affiche la todolist et le formulaire avec express en récupérant la vue todo.ejs.
