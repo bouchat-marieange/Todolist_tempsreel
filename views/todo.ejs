@@ -49,7 +49,7 @@
       socket.on('listeActuelle', function(todolistMiseAJour) {
         $('#taches').empty(); // On vide la todolist si elle contient déja quelque chose
         todolistMiseAJour.forEach(function(tache, index) { // tache (la valeur de l'élément du tableau en cours de traitement) - index (L'indice de l'élément du tableau en cours de traitement)
-          $('#taches').prepend('<li><a href="#" data-index="' + index + '" class="suppression">✘</a> ' + tache + '</li>'); // On affiche dans la zone de todolist , sous forme de liste à puces (<li>) en insèrant le contenu au début de la sélection (prepend) la dernière tâche ajoutée est placée au dessus de la liste, tout d'abord un lien (<a>)se présentant sous la forme d'une croix et contenant l'index lié à la tache (ce qui permettra en cliquant sur la croix de supprimer la tache qui y est associée)
+          $('#taches').prepend('<li><a href="#" data-index="' + index + '" class="suppression">✘</a> ' + tache + '</li>'); // On affiche dans la zone de todolist , sous forme de liste à puces (<li>) en insèrant le contenu au début de la sélection (prepend) la dernière tâche ajoutée est placée au dessus de la liste, tout d'abord un lien (<a>)se présentant sous la forme d'une croix et contenant l'index lié à la tache (ce qui permettra en cliquant sur la croix de supprimer la tache qui y est associée). HTML5 permet d'associer des données directement dans un élément HTML à l'aide des attributs data-*. On s'en sert pour stocker des données, ici on s'en sert pour stocker l'index dans data-index ce qui permettra de récupérer facilement cet index lors de la phase de suppression avec data('index')  (https://www.alsacreations.com/article/lire/1397-html5-attribut-data-dataset.html). Les + qui entoure + index + serve pour la concaténation.
         });
       });
 
@@ -62,8 +62,8 @@
       });
 
       // Quand l'utilisateur supprime une tache en cliquant sur la croix en regard de celle-ci
-      $('body').on('click', '.suppression', function() { // Lorsque l'utilisateur clique sur la croix
-        socket.emit('suppression', $(this).data('index')); //On supprime la tâche en regard de celle-ci en fonction de son index
+      $('body').on('click', '.suppression', function() { // Lorsque l'utilisateur clique sur la croix . Le . devant suppression fait référence à la classe suppression qui est ajouté à chaque élément lors de la boucle foreach d'affichage de la todolist
+        socket.emit('suppression', $(this).data('index')); //On supprime la tâche en regard de celle-ci en fonction de son index qui lui est associé
       });
     </script>
 
